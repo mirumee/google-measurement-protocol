@@ -24,9 +24,9 @@ class Requestable(object):
 class PageView(
         Requestable,
         namedtuple('PageView',
-                   'location host_name path title referrer')):
+                   'path host_name location title referrer')):
 
-    def __new__(cls, location=None, host_name=None, path=None, title=None,
+    def __new__(cls, path=None, host_name=None, location=None, title=None,
                 referrer=None):
         return super(PageView, cls).__new__(cls, location, host_name, path,
                                             title, referrer)
