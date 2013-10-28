@@ -5,11 +5,15 @@ import requests
 TRACKING_URI = 'https://www.google-analytics.com/collect'
 
 
+def _request(tracking_id, client_id, payload):
+    data = {'v': '1', 'tid': tracking_id, 'cid': client_id, 'aip': '1'}
+    data.update(payload)
+    return requests.post(TRACKING_URI, data=data)
+
+
 def report(tracking_id, client_id, requestable):
-    for payload in requestable:
-        data = {'v': '1', 'tid': tracking_id, 'cid': client_id, 'aip': '1'}
-        data.update(payload)
-        requests.post(TRACKING_URI, data=data)
+    return [_request(tracking_id, client_id, payload)
+            for payload in requestable]
 
 
 class Requestable(object):
@@ -28,7 +32,7 @@ class PageView(
 
     def __new__(cls, path=None, host_name=None, location=None, title=None,
                 referrer=None):
-        return super(PageView, cls).__new__(cls, location, host_name, path,
+        return super(PageView, cls).__new__(cls, path, host_name, location,
                                             title, referrer)
 
     def get_payload(self):
@@ -56,7 +60,7 @@ class Event(Requestable, namedtuple('Event', 'category action label value')):
         if self.label:
             payload['el'] = self.label
         if self.value:
-            payload['ev'] = int(self.value)
+            payload['ev'] = str(int(self.value))
         return payload
 
 
@@ -67,6 +71,8 @@ class Transaction(
 
     def __new__(cls, transaction_id, items, revenue=None, shipping=None,
                 affiliation=None):
+        if not items:
+            raise ValueError('You need to specify at least one item')
         return super(Transaction, cls).__new__(
             cls, transaction_id, items, revenue, shipping, affiliation)
 
@@ -111,11 +117,10 @@ class Item(namedtuple('Item', 'name unit_price quantity item_id category')):
 
     def get_payload_for_transaction(self, transaction_id):
         payload = {'t': 'item', 'ti': transaction_id, 'in': self.name}
-        if self.unit_price:
-            payload['ip'] = str(self.unit_price.gross)
-            payload['cu'] = self.unit_price.currency
+        payload['ip'] = str(self.unit_price.gross)
+        payload['cu'] = self.unit_price.currency
         if self.quantity:
-            payload['iq'] = int(self.quantity)
+            payload['iq'] = str(int(self.quantity))
         if self.item_id:
             payload['ic'] = self.item_id
         if self.category:
