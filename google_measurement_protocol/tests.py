@@ -1,5 +1,8 @@
 from unittest import TestCase
-from urlparse import parse_qs
+try:
+    from urllib.parse import parse_qs
+except ImportError:
+    from urlparse import parse_qs
 
 from httmock import response, urlmatch, with_httmock
 from prices import Price
