@@ -9,8 +9,7 @@ def report(tracking_id, client_id, requestable):
     for payload in requestable:
         data = {'v': '1', 'tid': tracking_id, 'cid': client_id, 'aip': '1'}
         data.update(payload)
-        r = requests.post(TRACKING_URI, data=data)
-        print r.request.body
+        requests.post(TRACKING_URI, data=data)
 
 
 class Requestable(object):
@@ -64,31 +63,34 @@ class Event(Requestable, namedtuple('Event', 'category action label value')):
 class Transaction(
         Requestable,
         namedtuple('Transaction',
-                   'transaction_id items revenue tax shipping affiliation')):
+                   'transaction_id items shipping affiliation')):
 
-    def __new__(cls, transaction_id, items, revenue=None, tax=None,
-                shipping=None, affiliation=None):
+    def __new__(cls, transaction_id, items, shipping=None,
+                affiliation=None):
         return super(Transaction, cls).__new__(
-            cls, transaction_id, items, revenue, tax, shipping, affiliation)
+            cls, transaction_id, items, shipping, affiliation)
+
+    def get_currency(self):
+        return self.items[0].unit_price.currency
+
+    def get_total(self):
+        prices = [i.get_subtotal() for i in self.items]
+        total = sum(prices[1:], prices[0])
+        if self.shipping:
+            total += shipping
+        return total
 
     def get_payload(self):
         payload = {'t': 'transaction', 'ti': self.transaction_id}
         if self.affiliation:
             payload['ta'] = self.affiliation
         currencies = set()
-        if self.revenue:
-            payload['tr'] = str(self.revenue.net)
-            currencies.add(self.revenue.currency)
-        if self.tax:
-            payload['tt'] = str(self.tax.net)
-            currencies.add(self.tax.currency)
+        total = self.get_total()
+        payload['tr'] = str(total.gross)
+        payload['tt'] = str(total.tax)
+        payload['cu'] = total.currency
         if self.shipping:
             payload['ts'] = str(self.shipping.gross)
-            currencies.add(self.shipping.currency)
-        if currencies:
-            if len(currencies) > 1:
-                raise ValueError('All prices must use the same currency')
-            (payload['cu'],) = currencies
         return payload
 
     def __iter__(self):
@@ -103,6 +105,11 @@ class Item(namedtuple('Item', 'name unit_price quantity item_id category')):
                 category=None):
         return super(Item, cls).__new__(cls, name, unit_price, quantity,
                                         item_id, category)
+
+    def get_subtotal(self):
+        if self.quantity:
+            return self.unit_price * self.quantity
+        return self.unit_price
 
     def get_payload_for_transaction(self, transaction_id):
         payload = {'t': 'item', 'ti': transaction_id, 'in': self.name}
