@@ -20,7 +20,7 @@ setup(name='google-measurement-protocol',
       description=('A Python implementation of'
                    ' Google Analytics Measurement Protocol'),
       license='BSD',
-      version='0.1.1',
+      version='0.1.2',
       packages=['google_measurement_protocol'],
       install_required=['requests>=2.0,<3.0a0'],
       test_suite='google_measurement_protocol.tests',

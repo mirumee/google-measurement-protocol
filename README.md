@@ -26,7 +26,7 @@ Reporting a page view
 
 There are two ways to construct a `PageView` object:
 ```python
-PageView('/my-page/'[, host_name=None][, title=None][, referrer=None])
+PageView(path[, host_name=None][, title=None][, referrer=None])
 ```
 ```python
 PageView(location='http://example.com/my-page/?foo=1'[, title=None][, referrer=None])
@@ -63,14 +63,15 @@ Reporting a transaction
 
 First create `Item`s to describe the contents of the transaction:
 ```python
-Item('product name', unit_price=Price(10, currency='EUR')[, quantity=None][, item_id=None])
+Item(name, unit_price[, quantity=None][, item_id=None])
 ```
 
 Then the `Transaction` itself:
 ```python
-Transaction('transaction id', items[, revenue=None][, shipping=None][, affiliation=None])
+Transaction(transaction_id, items[, revenue=None][, shipping=None][, affiliation=None])
 ```
-If `revenue` is given, it will override the total that is otherwise calculated from items and shipping.
+If `revenue` is given, it will override the total that is otherwise calculated
+from items and shipping.
 
 Example:
 ```python
@@ -82,4 +83,31 @@ items = [Item('My awesome product', Price(90, currency='EUR'), quantity=2),
          Item('Another product', Price(30, currency='EUR'))]
 transaction = Transaction(transaction_id, items)
 report('UA-123456-1', client_id, transaction)
+```
+
+
+Reporting extra data
+--------------------
+
+You can pass `extra_info` and `extra_headers` to `report()` function to submit
+additional information.
+
+`extra_headers` is passed directly as additional headers to `requests`
+library. This is currently the only way to pass `User-Agent`.
+
+`extra_info` should be an instance of `SystemInfo`. Currently only language
+reporting is supported:
+
+```python
+SystemInfo([language=None])
+```
+
+Example:
+```python
+from google_measurement_protocol import PageView, report, SystemInfo
+
+view = PageView(path='/my-page/', title='My Page', referrer='http://example.com/')
+headers = {'user-agent': 'my-user-agent 1.0'}
+info = SystemInfo(language='en-us')
+report('UA-123456-1', client_id, view, extra_info=info, extra_header=headers)
 ```

@@ -4,7 +4,8 @@ from urlparse import parse_qs
 from httmock import response, urlmatch, with_httmock
 from prices import Price
 
-from . import Event, Item, PageView, report, Requestable, Transaction
+from . import (Event, Item, PageView, report, SystemInfo, Requestable,
+               Transaction)
 
 
 class MockRequestable(Requestable):
@@ -29,6 +30,16 @@ class ReportTest(TestCase):
         self.assertEqual(data['cid'], ['CID'])
         self.assertEqual(data['tid'], ['UA-123456-78'])
         self.assertEqual(data['t'], ['mock'])
+
+    @with_httmock(ga_mock)
+    def test_extra_info(self):
+        empty_info = SystemInfo()
+        self.assertEqual(empty_info.get_payload(), {})
+        mr = MockRequestable()
+        info = SystemInfo(language='en-gb')
+        (response,) = report('UA-123456-78', 'CID', mr, extra_info=info)
+        data = response.json()
+        self.assertEqual(data['ul'], ['en-gb'])
 
 
 class PageViewTest(TestCase):

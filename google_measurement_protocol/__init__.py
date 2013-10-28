@@ -5,14 +5,23 @@ import requests
 TRACKING_URI = 'https://www.google-analytics.com/collect'
 
 
-def _request(tracking_id, client_id, payload, extra_headers):
-    data = {'v': '1', 'tid': tracking_id, 'cid': client_id, 'aip': '1'}
-    data.update(payload)
+def _request(payload, extra_payload, extra_headers):
+    data = dict(payload)
+    data.update(extra_payload)
     return requests.post(TRACKING_URI, data=data, headers=extra_headers)
 
 
-def report(tracking_id, client_id, requestable, extra_headers=None):
-    return [_request(tracking_id, client_id, payload, extra_headers)
+def report(tracking_id, client_id, requestable, extra_info=None,
+           extra_headers=None):
+    extra_payload = {
+        'v': '1',
+        'tid': tracking_id,
+        'cid': client_id,
+        'aip': '1'}
+    if extra_info:
+        for payload in extra_info:
+            extra_payload.update(payload)
+    return [_request(payload, extra_payload, extra_headers)
             for payload in requestable]
 
 
@@ -23,6 +32,18 @@ class Requestable(object):
 
     def __iter__(self):
         yield self.get_payload()
+
+
+class SystemInfo(Requestable, namedtuple('SystemInfo', 'language')):
+
+    def __new__(cls, language=None):
+        return super(SystemInfo, cls).__new__(cls, language)
+
+    def get_payload(self):
+        payload = {}
+        if self.language:
+            payload['ul'] = self.language
+        return payload
 
 
 class PageView(
@@ -56,7 +77,10 @@ class Event(Requestable, namedtuple('Event', 'category action label value')):
         return super(Event, cls).__new__(cls, category, action, label, value)
 
     def get_payload(self):
-        payload = {'t': 'event', 'ec': self.category, 'ea': self.action}
+        payload = {
+            't': 'event',
+            'ec': self.category,
+            'ea': self.action}
         if self.label:
             payload['el'] = self.label
         if self.value:
@@ -86,7 +110,9 @@ class Transaction(
         return total
 
     def get_payload(self):
-        payload = {'t': 'transaction', 'ti': self.transaction_id}
+        payload = {
+            't': 'transaction',
+            'ti': self.transaction_id}
         if self.affiliation:
             payload['ta'] = self.affiliation
         total = self.get_total()
@@ -116,7 +142,10 @@ class Item(namedtuple('Item', 'name unit_price quantity item_id category')):
         return self.unit_price
 
     def get_payload_for_transaction(self, transaction_id):
-        payload = {'t': 'item', 'ti': transaction_id, 'in': self.name}
+        payload = {
+            't': 'item',
+            'ti': transaction_id,
+            'in': self.name}
         payload['ip'] = str(self.unit_price.gross)
         payload['cu'] = self.unit_price.currency
         if self.quantity:
