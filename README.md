@@ -24,6 +24,14 @@ client_id = uuid.uuid4()
 Reporting a page view
 ---------------------
 
+There are two ways to construct a `PageView` object:
+```python
+PageView('/my-page/'[, host_name=None][, title=None][, referrer=None])
+```
+```python
+PageView(location='http://example.com/my-page/?foo=1'[, title=None][, referrer=None])
+```
+
 ```python
 from google_measurement_protocol import PageView, report
 
@@ -32,8 +40,35 @@ report('UA-123456-1', client_id, view)
 ```
 
 
+Reporting an event
+------------------
+
+Use the `Event` object:
+```python
+Event('category', 'action'[, label=None][, value=None])
+```
+
+```python
+from google_measurement_protocol import Event, report
+
+event = Event('profile', 'user_registered')
+report('UA-123456-1', client_id, event)
+```
+
+
 Reporting a transaction
 -----------------------
+
+First create `Item`s to describe the contents of the transaction:
+```python
+Item('product name', unit_price=Price(10, currency='EUR')[, quantity=None][, item_id=None])
+```
+
+Then the `Transaction` itself:
+```python
+Transaction('transaction id', items[, revenue=None][, shipping=None][, affiliation=None])
+```
+If `revenue` is given, it will override the total that is otherwise calculated from items and shipping.
 
 ```python
 from google_measurement_protocol import Item, report, Transaction
