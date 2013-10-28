@@ -40,10 +40,8 @@ from google_measurement_protocol import Item, report, Transaction
 from prices import Price
 
 transaction_id = '0001'  # any string should do
-items = [
-    Item('My awesome product', Price(90, currency='EUR'), quantity=2),
-    Item('Another product', Price(30, currency='EUR'))]
-transaction = Transaction(
-    transaction_id, items, shipping=Price(10, currency='EUR'))
+items = [Item('My awesome product', Price(90, currency='EUR'), quantity=2),
+         Item('Another product', Price(30, currency='EUR'))]
+transaction = Transaction(transaction_id, items)
 report('UA-123456-1', client_id, transaction)
 ```
