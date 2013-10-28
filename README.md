@@ -6,7 +6,7 @@ A Python implementation of Google Analytics Measurement Protocol
 Transaction handling depends on the `prices` library.
 
 
-Generating a cliend ID
+Generating a client ID
 ----------------------
 
 Google strongly encourages using UUID version 4 as unique user handles.
