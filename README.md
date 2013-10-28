@@ -32,6 +32,7 @@ PageView('/my-page/'[, host_name=None][, title=None][, referrer=None])
 PageView(location='http://example.com/my-page/?foo=1'[, title=None][, referrer=None])
 ```
 
+Example:
 ```python
 from google_measurement_protocol import PageView, report
 
@@ -48,6 +49,7 @@ Use the `Event` object:
 Event('category', 'action'[, label=None][, value=None])
 ```
 
+Example:
 ```python
 from google_measurement_protocol import Event, report
 
@@ -70,6 +72,7 @@ Transaction('transaction id', items[, revenue=None][, shipping=None][, affiliati
 ```
 If `revenue` is given, it will override the total that is otherwise calculated from items and shipping.
 
+Example:
 ```python
 from google_measurement_protocol import Item, report, Transaction
 from prices import Price
