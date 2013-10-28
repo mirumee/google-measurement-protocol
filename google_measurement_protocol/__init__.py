@@ -5,14 +5,14 @@ import requests
 TRACKING_URI = 'https://www.google-analytics.com/collect'
 
 
-def _request(tracking_id, client_id, payload):
+def _request(tracking_id, client_id, payload, extra_headers):
     data = {'v': '1', 'tid': tracking_id, 'cid': client_id, 'aip': '1'}
     data.update(payload)
-    return requests.post(TRACKING_URI, data=data)
+    return requests.post(TRACKING_URI, data=data, headers=extra_headers)
 
 
-def report(tracking_id, client_id, requestable):
-    return [_request(tracking_id, client_id, payload)
+def report(tracking_id, client_id, requestable, extra_headers=None):
+    return [_request(tracking_id, client_id, payload, extra_headers)
             for payload in requestable]
 
 
