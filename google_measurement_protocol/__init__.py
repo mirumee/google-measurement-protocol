@@ -63,28 +63,26 @@ class Event(Requestable, namedtuple('Event', 'category action label value')):
 class Transaction(
         Requestable,
         namedtuple('Transaction',
-                   'transaction_id items shipping affiliation')):
+                   'transaction_id items revenue shipping affiliation')):
 
-    def __new__(cls, transaction_id, items, shipping=None,
+    def __new__(cls, transaction_id, items, revenue=None, shipping=None,
                 affiliation=None):
         return super(Transaction, cls).__new__(
-            cls, transaction_id, items, shipping, affiliation)
-
-    def get_currency(self):
-        return self.items[0].unit_price.currency
+            cls, transaction_id, items, revenue, shipping, affiliation)
 
     def get_total(self):
+        if self.revenue:
+            return self.revenue
         prices = [i.get_subtotal() for i in self.items]
         total = sum(prices[1:], prices[0])
         if self.shipping:
-            total += shipping
+            total += self.shipping
         return total
 
     def get_payload(self):
         payload = {'t': 'transaction', 'ti': self.transaction_id}
         if self.affiliation:
             payload['ta'] = self.affiliation
-        currencies = set()
         total = self.get_total()
         payload['tr'] = str(total.gross)
         payload['tt'] = str(total.tax)
