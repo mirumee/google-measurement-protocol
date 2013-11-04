@@ -8,7 +8,7 @@ from httmock import response, urlmatch, with_httmock
 from prices import Price
 
 from . import (Event, Item, PageView, report, SystemInfo, Requestable,
-               Transaction)
+               Transaction, payloads)
 
 
 class MockRequestable(Requestable):
@@ -153,5 +153,26 @@ class TransactionTest(TestCase):
         items = [Item('item-01', Price(10, currency='USD')),
                  Item('item-02', Price(10, currency='USD'))]
         trans = Transaction('trans-01', items)
-        payloads = list(trans)
-        self.assertEqual(len(payloads), 3)
+        trans_payloads = list(trans)
+        self.assertEqual(len(trans_payloads), 3)
+
+
+class PayloadsTest(TestCase):
+
+    def test_payloads(self):
+        items = [Item('item-01', Price(10, currency='USD')),
+                 Item('item-02', Price(10, currency='USD'))]
+        trans = Transaction('trans-01', items)
+        trans_payloads = list(payloads(
+            'tracking-id',
+            'client-id',
+            trans,
+            SystemInfo(language='en-gb'),
+            {'extra-header-key': 'extra-head-value'}))
+
+        self.assertEqual(len(trans_payloads), 3)
+        for data, headers in trans_payloads:
+            self.assertEqual(data['tid'], 'tracking-id')
+            self.assertEqual(data['cid'], 'client-id')
+            self.assertEqual(data['ul'], 'en-gb')
+            self.assertTrue(headers['extra-header-key'], 'extra-header-value')
