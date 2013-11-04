@@ -5,14 +5,25 @@ import requests
 TRACKING_URI = 'https://www.google-analytics.com/collect'
 
 
-def _request(payload, extra_payload, extra_headers):
-    data = dict(payload)
-    data.update(extra_payload)
+def _request(data, extra_headers):
     return requests.post(TRACKING_URI, data=data, headers=extra_headers)
 
 
 def report(tracking_id, client_id, requestable, extra_info=None,
            extra_headers=None):
+    """Actually report measurements to Google Analytics."""
+    return [_request(data, extra_headers)
+            for data, extra_headers in payloads(
+            tracking_id, client_id, requestable, extra_info, extra_headers)]
+
+
+def payloads(tracking_id, client_id, requestable, extra_info=None,
+             extra_headers=None):
+    """Get data and headers of API requests for Google Analytics.
+
+    Generates a sequence of (data, headers) pairs. Both `data` and `headers`
+    are dicts.
+    """
     extra_payload = {
         'v': '1',
         'tid': tracking_id,
@@ -21,8 +32,11 @@ def report(tracking_id, client_id, requestable, extra_info=None,
     if extra_info:
         for payload in extra_info:
             extra_payload.update(payload)
-    return [_request(payload, extra_payload, extra_headers)
-            for payload in requestable]
+
+    for request_payload in requestable:
+        final_payload = dict(request_payload)
+        final_payload.update(extra_payload)
+        yield final_payload, extra_headers
 
 
 class Requestable(object):
