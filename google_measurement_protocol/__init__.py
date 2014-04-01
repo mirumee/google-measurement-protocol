@@ -2,7 +2,7 @@ from collections import namedtuple
 
 import requests
 
-TRACKING_URI = 'https://www.google-analytics.com/collect'
+TRACKING_URI = 'https://ssl.google-analytics.com/collect'
 
 
 def _request(data, extra_headers):

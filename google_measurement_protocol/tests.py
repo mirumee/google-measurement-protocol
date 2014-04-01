@@ -17,7 +17,7 @@ class MockRequestable(Requestable):
         return {'t': 'mock'}
 
 
-@urlmatch(netloc=r'www\.google-analytics\.com', path='/collect')
+@urlmatch(netloc=r'ssl\.google-analytics\.com', path='/collect')
 def ga_mock(url, request):
     qs = parse_qs(request.body)
     return response(200, qs)
