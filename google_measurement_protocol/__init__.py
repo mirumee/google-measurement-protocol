@@ -6,7 +6,7 @@ TRACKING_URI = 'https://ssl.google-analytics.com/collect'
 
 
 def _request(data, extra_headers):
-    return requests.post(TRACKING_URI, data=data, headers=extra_headers)
+    return requests.post(TRACKING_URI, data=data, headers=extra_headers, timeout=5.0)
 
 
 def report(tracking_id, client_id, requestable, extra_info=None,
