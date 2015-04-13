@@ -89,19 +89,23 @@ report('UA-123456-1', client_id, transaction)
 Reporting an extended ecommerce purchase
 ----------------------------------------
 
-For Extended Ecommerce we have implemented Purchase tracking
+For Extended Ecommerce we have implemented Purchase tracking, please note
+this will add an event automatically, as required by Google Analytics
 
 First create `EnhancedItem`s to describe the contents of the transaction:
 ```python
-EnhancedItem(name, unit_price[, quantity=None][, item_id=None][, category=None][, brand=None][, variant=None])
+EnhancedItem(name, unit_price[, quantity=None][, item_id=None]
+             [, category=None][, brand=None][, variant=None])
 ```
 
 Then the `EnhancedPurchase` itself:
 ```python
-EnhancedPurchase(transaction_id, items, url_page[, revenue=None][, tax=None][, shipping=None][, host=None][, affiliation=None])
+EnhancedPurchase(transaction_id, items, url_page[, revenue=None][, tax=None]
+                 [, shipping=None][, host=None][, affiliation=None])
 ```
 If `revenue` is given, it will override the total that is otherwise calculated
-from items, taxes and shipping.
+from items, taxes and shipping. please note you have to add an explicit path
+when creating your `EnhancedPurchase` instance.
 
 Example:
 ```python
