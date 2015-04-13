@@ -249,6 +249,6 @@ class EnhancedPurchase(Requestable,
         event = Event('ecommerce', 'purchase')
         yield event.get_payload()
         to_return = self.get_payload()
-        for i in xrange(len(self.items)):
+        for i in range(len(self.items)):
             to_return.update(self.items[i].get_payload_for_transaction(i + 1))
         yield to_return
