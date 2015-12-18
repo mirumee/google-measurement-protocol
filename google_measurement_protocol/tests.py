@@ -8,7 +8,7 @@ from httmock import response, urlmatch, with_httmock
 from prices import Price
 
 from . import (Event, Item, PageView, report, SystemInfo, Requestable,
-               Transaction, payloads)
+               EnhancedItem, Transaction, EnhancedPurchase, payloads)
 
 
 class MockRequestable(Requestable):
@@ -157,6 +157,46 @@ class TransactionTest(TestCase):
         self.assertEqual(len(trans_payloads), 3)
 
 
+class EnhancedPurchaseTest(TestCase):
+
+    def test_no_items(self):
+        self.assertRaises(ValueError, lambda: Transaction('trans-01', []))
+
+    def test_required_params(self):
+        items = [EnhancedItem('item-01', 10)]
+        trans = EnhancedPurchase('trans-01', items, '/cart/')
+        self.assertEqual(
+            trans.get_payload(),
+            {'dp': '/cart/', 'pa': 'purchase', 'ti': 'trans-01',
+             'tr': '10', 'tt': '0'}
+        )
+
+    def test_revenue_override(self):
+        items = [EnhancedItem('item-01', 1000)]
+        trans = EnhancedPurchase('trans-01', items, '/cart/',
+                                 revenue=1040, tax=50, shipping=100)
+        self.assertEqual(
+            trans.get_payload(),
+            {'dp': '/cart/', 'pa': 'purchase', 'ti': 'trans-01', 'tr': '1040',
+             'ts': '100', 'tt': '50'})
+
+    def test_calculate_total(self):
+        items = [EnhancedItem('item-01', 30)]
+        trans = EnhancedPurchase('trans-01', items, '/cart/',
+                                 shipping=5, tax=5)
+        self.assertEqual(
+            trans.get_payload(),
+            {'dp': '/cart/', 'pa': 'purchase', 'ti': 'trans-01', 'tr': '40',
+             'ts': '5', 'tt': '5'})
+
+    def test_iter(self):
+        items = [EnhancedItem('item-01', 10),
+                 EnhancedItem('item-02', 10)]
+        trans = EnhancedPurchase('trans-01', items, '/cart/')
+        trans_payloads = list(trans)
+        self.assertEqual(len(trans_payloads), 2)
+
+
 class PayloadsTest(TestCase):
 
     def test_payloads(self):
@@ -176,3 +216,6 @@ class PayloadsTest(TestCase):
             self.assertEqual(data['cid'], 'client-id')
             self.assertEqual(data['ul'], 'en-gb')
             self.assertTrue(headers['extra-header-key'], 'extra-header-value')
+
+if __name__ == "__main__":
+    unittest.main()
