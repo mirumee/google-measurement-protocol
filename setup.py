@@ -44,7 +44,7 @@ setup(
     license='BSD',
     version='0.1.5',
     packages=['google_measurement_protocol'],
-    install_required=['requests>=2.0,<3.0a0'],
+    install_requires=['requests>=2.0,<3.0a0'],
     tests_require=['httmock>=1.0,<1.1a0', 'prices>=0.5,<0.6a0', 'pytest'],
     classifiers=CLASSIFIERS,
     cmdclass={
