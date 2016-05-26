@@ -206,16 +206,16 @@ class EnhancedItem(namedtuple('EnhancedItem',
 
 
 class EnhancedPurchase(Requestable,
-                       namedtuple('EnhancedPurchase', 'transaction_id items url_page revenue tax shipping host affiliation')):
+                       namedtuple('EnhancedPurchase', 'transaction_id items url_page revenue tax shipping host affiliation coupon')):
 
     def __new__(cls, transaction_id, items, url_page, revenue=None, tax=None,
-                shipping=None, host=None, affiliation=None):
+                shipping=None, host=None, affiliation=None, coupon=None):
         if not items:
             raise ValueError('You need to specify at least one item')
         return super(EnhancedPurchase, cls).__new__(cls, transaction_id, items,
                                                     url_page, revenue, tax,
                                                     shipping, host,
-                                                    affiliation)
+                                                    affiliation, coupon)
 
     def get_total(self):
         if self.revenue:
@@ -243,6 +243,8 @@ class EnhancedPurchase(Requestable,
             payload['dh'] = self.host
         if self.affiliation:
             payload['ta'] = self.affiliation
+        if self.coupon:
+            payload['tcc'] = self.coupon
         return payload
 
     def __iter__(self):
