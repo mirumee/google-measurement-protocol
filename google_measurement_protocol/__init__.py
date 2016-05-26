@@ -194,13 +194,13 @@ class EnhancedItem(namedtuple('EnhancedItem',
         quantity = self.quantity or 1
         payload['pr{0}qt'.format(position)] = '{0}'.format(quantity)
         if self.item_id:
-            payload['pr{0}id'] = self.item_id
+            payload['pr{0}id'.format(position)] = self.item_id
         if self.category:
-            payload['pr{0}ca'] = self.category
+            payload['pr{0}ca'.format(position)] = self.category
         if self.brand:
-            payload['pr{0}br'] = self.brand
+            payload['pr{0}br'.format(position)] = self.brand
         if self.variant:
-            payload['pr{0}va'] = self.variant
+            payload['pr{0}va'.format(position)] = self.variant
 
         return payload
 
