@@ -196,6 +196,15 @@ class EnhancedPurchaseTest(TestCase):
         trans_payloads = list(trans)
         self.assertEqual(len(trans_payloads), 2)
 
+    def test_coupon(self):
+        items = [EnhancedItem('item-01', 10)]
+        trans = EnhancedPurchase('trans-01', items, '/cart/', coupon='TESTCOUPON')
+        self.assertEqual(
+            trans.get_payload(),
+            {'dp': '/cart/', 'pa': 'purchase', 'ti': 'trans-01',
+             'tr': '10', 'tt': '0', 'tcc': 'TESTCOUPON'}
+        )
+
 
 class PayloadsTest(TestCase):
 
