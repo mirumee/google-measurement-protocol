@@ -179,7 +179,7 @@ class EnhancedItem(namedtuple('EnhancedItem',
                 category=None, brand=None, variant=None):
         return super(EnhancedItem, cls).__new__(cls, name, unit_price,
                                                 quantity, item_id, category,
-                                                variant, brand)
+                                                brand, variant)
 
     def get_subtotal(self):
         if self.quantity:
