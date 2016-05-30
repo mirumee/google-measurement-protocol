@@ -179,7 +179,7 @@ class EnhancedItem(namedtuple('EnhancedItem',
                 category=None, brand=None, variant=None):
         return super(EnhancedItem, cls).__new__(cls, name, unit_price,
                                                 quantity, item_id, category,
-                                                variant, brand)
+                                                brand, variant)
 
     def get_subtotal(self):
         if self.quantity:
@@ -194,28 +194,28 @@ class EnhancedItem(namedtuple('EnhancedItem',
         quantity = self.quantity or 1
         payload['pr{0}qt'.format(position)] = '{0}'.format(quantity)
         if self.item_id:
-            payload['pr{0}id'] = self.item_id
+            payload['pr{0}id'.format(position)] = self.item_id
         if self.category:
-            payload['pr{0}ca'] = self.category
+            payload['pr{0}ca'.format(position)] = self.category
         if self.brand:
-            payload['pr{0}br'] = self.brand
+            payload['pr{0}br'.format(position)] = self.brand
         if self.variant:
-            payload['pr{0}va'] = self.variant
+            payload['pr{0}va'.format(position)] = self.variant
 
         return payload
 
 
 class EnhancedPurchase(Requestable,
-                       namedtuple('EnhancedPurchase', 'transaction_id items url_page revenue tax shipping host affiliation')):
+                       namedtuple('EnhancedPurchase', 'transaction_id items url_page revenue tax shipping host affiliation coupon')):
 
     def __new__(cls, transaction_id, items, url_page, revenue=None, tax=None,
-                shipping=None, host=None, affiliation=None):
+                shipping=None, host=None, affiliation=None, coupon=None):
         if not items:
             raise ValueError('You need to specify at least one item')
         return super(EnhancedPurchase, cls).__new__(cls, transaction_id, items,
                                                     url_page, revenue, tax,
                                                     shipping, host,
-                                                    affiliation)
+                                                    affiliation, coupon)
 
     def get_total(self):
         if self.revenue:
@@ -243,6 +243,8 @@ class EnhancedPurchase(Requestable,
             payload['dh'] = self.host
         if self.affiliation:
             payload['ta'] = self.affiliation
+        if self.coupon:
+            payload['tcc'] = self.coupon
         return payload
 
     def __iter__(self):
