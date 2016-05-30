@@ -42,7 +42,7 @@ setup(
     description=('A Python implementation of'
                  ' Google Analytics Measurement Protocol'),
     license='BSD',
-    version='0.1.5',
+    version='0.1.6',
     packages=['google_measurement_protocol'],
     install_requires=['requests>=2.0,<3.0a0'],
     tests_require=['httmock>=1.0,<1.1a0', 'prices>=0.5,<0.6a0', 'pytest'],
