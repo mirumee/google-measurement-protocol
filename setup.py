@@ -8,9 +8,9 @@ CLASSIFIERS = [
     'License :: OSI Approved :: BSD License',
     'Operating System :: OS Independent',
     'Programming Language :: Python',
-    'Programming Language :: Python :: 2.7',
     'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
     'Topic :: Software Development :: Libraries :: Python Modules',
 ]
 
@@ -42,7 +42,7 @@ setup(
     description=('A Python implementation of'
                  ' Google Analytics Measurement Protocol'),
     license='BSD',
-    version='0.2.0',
+    version='1.0.0',
     packages=['google_measurement_protocol'],
     install_requires=['requests>=2.0,<3.0a0'],
     tests_require=['httmock>=1.0,<1.1a0', 'prices>=1.0.0', 'pytest'],
