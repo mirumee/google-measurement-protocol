@@ -1,11 +1,11 @@
 *.py[cod]
+*.pytest_cache/
 
 # C extensions
 *.so
 
 # Packages
-*.egg
-*.egg-info
+*\.egg*
 dist
 build
 eggs

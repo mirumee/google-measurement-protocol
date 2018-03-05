@@ -76,11 +76,17 @@ from items and shipping.
 Example:
 ```python
 from google_measurement_protocol import Item, report, Transaction
-from prices import Price
+from prices import Money, TaxedMoney
 
 transaction_id = '0001'  # any string should do
-items = [Item('My awesome product', Price(90, currency='EUR'), quantity=2),
-         Item('Another product', Price(30, currency='EUR'))]
+items = [
+    Item(
+        'My awesome product', TaxedMoney(
+            net=Money(90, currency='EUR'), gross=Money(100, currency='EUR')),
+            quantity=2),
+    Item(
+        'Another product', TaxedMoney(
+            net=Money(27, currency='EUR'), gross=Money(30, currency='EUR'))]
 transaction = Transaction(transaction_id, items)
 report('UA-123456-1', client_id, transaction)
 ```
@@ -112,8 +118,8 @@ Example:
 from google_measurement_protocol import EnhancedItem, report, EnhancedPurchase
 
 transaction_id = '0001'  # any string should do
-items = [Item('My awesome product', 90, quantity=2),
-         Item('Another product', 30))]
+items = [EnhancedItem('My awesome product', 90, quantity=2),
+         EnhancedItem('Another product', 30))]
 transaction = EnhancedPurchase(transaction_id, items, '/cart/')
 report('UA-123456-1', client_id, transaction)
 ```

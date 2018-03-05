@@ -131,11 +131,11 @@ class Transaction(
         if self.affiliation:
             payload['ta'] = self.affiliation
         total = self.get_total()
-        payload['tr'] = str(total.gross)
-        payload['tt'] = str(total.tax)
+        payload['tr'] = str(total.gross.amount)
+        payload['tt'] = str(total.tax.amount)
         payload['cu'] = total.currency
         if self.shipping:
-            payload['ts'] = str(self.shipping.gross)
+            payload['ts'] = str(self.shipping.gross.amount)
         return payload
 
     def __iter__(self):
@@ -161,7 +161,7 @@ class Item(namedtuple('Item', 'name unit_price quantity item_id category')):
             't': 'item',
             'ti': transaction_id,
             'in': self.name}
-        payload['ip'] = str(self.unit_price.gross)
+        payload['ip'] = str(self.unit_price.gross.amount)
         payload['cu'] = self.unit_price.currency
         if self.quantity:
             payload['iq'] = str(int(self.quantity))
