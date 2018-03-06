@@ -15,3 +15,9 @@ def test_optional_params():
     assert data == {
         't': 'event', 'ec': 'category', 'ea': 'action', 'el': 'label',
         'ev': '7'}
+
+
+def test_extra_params():
+    data = event('category', 'action', ex='extra')
+    assert data == {
+        't': 'event', 'ec': 'category', 'ea': 'action', 'ex': 'extra'}

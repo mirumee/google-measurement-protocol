@@ -68,7 +68,7 @@ def transaction(
 
     if affiliation:
         payload['ta'] = affiliation
-    if shipping:
+    if shipping is not None:
         payload['ts'] = str(shipping.gross.amount)
 
     payload.update(extra_info)
@@ -112,7 +112,7 @@ def enhanced_item(
         name, unit_price, quantity=None, item_id=None, category=None,
         brand=None, variant=None, **extra_info):
     payload = {'nm': name, 'pr': unit_price, 'qt': quantity or 1}
-        
+
     if item_id:
         payload['id'] = item_id
     if category:
@@ -146,7 +146,7 @@ def enhanced_purchase(
         payload['ta'] = self.affiliation
     if coupon:
         payload['tcc'] = coupon
-    
+
     payload.update(extra_info)
 
     for position, item in enumerate(items):
