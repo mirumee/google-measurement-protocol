@@ -1,5 +1,3 @@
-from urllib.parse import parse_qs
-
 from prices import Money, TaxedMoney
 
 from google_measurement_protocol import event
