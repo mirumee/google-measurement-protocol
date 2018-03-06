@@ -5,9 +5,9 @@ python:
   - 3.6
 install:
   - python setup.py install
-  - pip install coverage
+  - pip install httmock pytest pytest-cov
   - pip install codecov
-  - pip install pytest
-script: coverage run setup.py test
+script:
+  - pytest --cov
 after_success:
   - codecov
