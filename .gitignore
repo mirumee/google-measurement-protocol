@@ -1,6 +1,10 @@
 *.py[cod]
 *.pytest_cache/
 
+# OS Files
+.DS_Store
+Thumbs.db
+
 # C extensions
 *.so
 
