@@ -1,3 +1,6 @@
+from .event import event
+
+
 def enhanced_item(
         name, unit_price, quantity=None, item_id=None, category=None,
         brand=None, variant=None, **extra_info):
