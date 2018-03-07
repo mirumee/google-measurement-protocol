@@ -3,9 +3,9 @@ from .event import event
 
 def enhanced_item(
         name, unit_price, quantity=None, item_id=None, category=None,
-        brand=None, variant=None, **extra_info):
+        brand=None, variant=None, **extra_data):
     payload = {
-        'nm': name, 'pr': str(unit_price.gross.amount), 'qt': quantity or 1}
+        'nm': name, 'pr': str(unit_price.amount), 'qt': quantity or 1}
 
     if item_id:
         payload['id'] = item_id
@@ -16,13 +16,13 @@ def enhanced_item(
     if variant:
         payload['va'] = variant
 
-    payload.update(extra_info)
+    payload.update(extra_data)
     return payload
 
 
 def enhanced_purchase(
         transaction_id, items, revenue, url_page, tax=None, shipping=None,
-        host=None, affiliation=None, coupon=None, **extra_info):
+        host=None, affiliation=None, coupon=None, **extra_data):
     if not items:
         raise ValueError('You need to specify at least one item')
 
@@ -30,10 +30,12 @@ def enhanced_purchase(
 
     payload = {
         'pa': 'purchase', 'ti': transaction_id, 'dp': url_page,
-        'tt': str(tax or 0), 'tr': str(revenue.gross.amount)}
+        'tr': str(revenue.amount), 'tt': '0'}
         
     if shipping:
         payload['ts'] = str(shipping)
+    if tax is not None:
+        payload['tt'] = str(tax.amount)
     if host:
         payload['dh'] = host
     if affiliation:
@@ -41,7 +43,7 @@ def enhanced_purchase(
     if coupon:
         payload['tcc'] = coupon
 
-    payload.update(extra_info)
+    payload.update(extra_data)
 
     for position, item in enumerate(items):
         payload.update(_finalize_enhanced_purchase_item(item, position + 1))

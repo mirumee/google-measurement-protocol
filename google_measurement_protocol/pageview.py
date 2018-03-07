@@ -1,6 +1,6 @@
 def pageview(
         path=None, host_name=None, location=None, title=None, language=None,
-        referrer=None, **extra_info):
+        referrer=None, **extra_data):
     payload = {'t': 'pageview'}
 
     if location:
@@ -16,5 +16,5 @@ def pageview(
     if language:
         payload['ul'] = language
 
-    payload.update(extra_info)
+    payload.update(extra_data)
     yield payload

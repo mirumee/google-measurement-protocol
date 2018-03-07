@@ -1,8 +1,7 @@
 import pytest
-from prices import Money, TaxedMoney
+from prices import Money
 
 
 @pytest.fixture
-def price():
-    return TaxedMoney(
-        net=Money(8, currency='USD'), gross=Money(10, currency='USD'))
+def amount():
+    return Money(10, currency='USD')
