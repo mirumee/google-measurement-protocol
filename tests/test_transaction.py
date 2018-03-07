@@ -5,18 +5,18 @@ from google_measurement_protocol import item, transaction
 
 
 @pytest.fixture
-def single_item_list(amount):
-    return [item('item-01', amount)]
+def single_item_list():
+    return [item('item-01', Money(10, 'USD'))]
 
 
-def test_no_items(amount):
-    generator = transaction('trans-01', [], amount)
+def test_no_items():
+    generator = transaction('trans-01', [], Money(0, 'USD'))
     with pytest.raises(ValueError):
         list(generator)
 
 
-def test_required_params(amount, single_item_list):
-    generator = transaction('trans-01', single_item_list, amount)
+def test_required_params(single_item_list):
+    generator = transaction('trans-01', single_item_list, Money(10, 'USD'))
     assert list(generator) == [
         {
             't': 'transaction', 'ti': 'trans-01', 'cu': 'USD', 'tr': '10',
@@ -26,9 +26,9 @@ def test_required_params(amount, single_item_list):
             'ti': 'trans-01'}]
 
 
-def test_tax(amount, single_item_list):
-    tax = Money(2, currency='USD')
-    generator = transaction('trans-01', single_item_list, amount, tax=tax)
+def test_tax(single_item_list):
+    generator = transaction(
+        'trans-01', single_item_list, Money(10, 'USD'), tax=Money(2, 'USD'))
     assert list(generator) == [
         {
             't': 'transaction', 'ti': 'trans-01', 'cu': 'USD', 'tr': '10',
@@ -38,10 +38,10 @@ def test_tax(amount, single_item_list):
             'ti': 'trans-01'}]
 
 
-def test_shipping(amount, single_item_list):
-    shipping_price = Money(100, currency='USD')
+def test_shipping(single_item_list):
     generator = transaction(
-        'trans-01', single_item_list, amount, shipping=shipping_price)
+        'trans-01', single_item_list, Money(10, 'USD'),
+        shipping=Money(100, currency='USD'))
     assert list(generator) == [
         {
             't': 'transaction', 'ti': 'trans-01', 'cu': 'USD', 'tr': '10',
@@ -51,9 +51,9 @@ def test_shipping(amount, single_item_list):
             'ti': 'trans-01'}]
 
 
-def test_affiliation(amount, single_item_list):
+def test_affiliation(single_item_list):
     generator = transaction(
-        'trans-01', single_item_list, amount, affiliation='loyalty')
+        'trans-01', single_item_list, Money(10, 'USD'), affiliation='loyalty')
     assert list(generator) == [
         {
             't': 'transaction', 'ti': 'trans-01', 'tr': '10', 'tt': '0',
@@ -63,9 +63,9 @@ def test_affiliation(amount, single_item_list):
             'ti': 'trans-01'}]
 
 
-def test_extra_params(amount, single_item_list):
+def test_extra_params(single_item_list):
     generator = transaction(
-        'trans-01', single_item_list, amount, ex='extra')
+        'trans-01', single_item_list, Money(10, 'USD'), ex='extra')
     assert list(generator) == [
         {
             't': 'transaction', 'ti': 'trans-01', 'tr': '10', 'tt': '0',

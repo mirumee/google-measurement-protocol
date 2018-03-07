@@ -78,9 +78,9 @@ from prices import Money
 
 transaction_id = '0001'  # any string should do
 items = [
-    item('My awesome product', Money(10, currency='EUR'), quantity=2),
-    item('Another product', Money(17, currency='EUR'))]
-data = transaction(transaction_id, items, Money(37, currency='EUR'))
+    item('My awesome product', Money(10, 'EUR'), quantity=2),
+    item('Another product', Money(17, 'EUR'))]
+data = transaction(transaction_id, items, Money(37, 'EUR'))
 report('UA-123456-1', client_id, data)
 ```
 
@@ -113,9 +113,9 @@ from google_measurement_protocol import enhanced_item, enhanced_purchase, report
 
 transaction_id = '0001'  # any string should do
 items = [
-    enhanced_item('My awesome product', Money(10, currency='USD'), quantity=2),
-    enhanced_item('Another product', Money(15, currency='USD'))]
-data = enhanced_purchase(transaction_id, items, Money(27, currency='USD'), '/cart/')
+    enhanced_item('My awesome product', Money(10, 'USD'), quantity=2),
+    enhanced_item('Another product', Money(15, 'USD'))]
+data = enhanced_purchase(transaction_id, items, Money(27, 'USD'), '/cart/')
 report('UA-123456-1', client_id, data)
 ```
 
