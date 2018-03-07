@@ -4,14 +4,14 @@ TRACKING_URI = 'https://ssl.google-analytics.com/collect'
 
 
 def report(
-        tracking_id, client_id, payloads, headers=None, **extra_info):
+        tracking_id, client_id, payloads, extra_headers=None, **extra_info):
     """Actually report measurements to Google Analytics."""
     return [
-        _make_request(data, headers) for data in finalize_payloads(
-            tracking_id, client_id, requestable, **extra_info)]
+        _make_request(data, extra_headers) for data in _finalize_payloads(
+            tracking_id, client_id, payloads, **extra_info)]
 
 
-def _make_request(data, headers):
+def _make_request(data, extra_headers):
     return requests.post(
         TRACKING_URI, data=data, headers=extra_headers, timeout=5.0)
 

@@ -4,7 +4,8 @@ from .event import event
 def enhanced_item(
         name, unit_price, quantity=None, item_id=None, category=None,
         brand=None, variant=None, **extra_info):
-    payload = {'nm': name, 'pr': unit_price, 'qt': quantity or 1}
+    payload = {
+        'nm': name, 'pr': str(unit_price.gross.amount), 'qt': quantity or 1}
 
     if item_id:
         payload['id'] = item_id
@@ -20,7 +21,7 @@ def enhanced_item(
 
 
 def enhanced_purchase(
-        transaction_id, items, url_page, revenue, tax=None, shipping=None,
+        transaction_id, items, revenue, url_page, tax=None, shipping=None,
         host=None, affiliation=None, coupon=None, **extra_info):
     if not items:
         raise ValueError('You need to specify at least one item')
@@ -29,7 +30,7 @@ def enhanced_purchase(
 
     payload = {
         'pa': 'purchase', 'ti': transaction_id, 'dp': url_page,
-        'tt': str(tax or 0), 'tr': str(revenue)}
+        'tt': str(tax or 0), 'tr': str(revenue.gross.amount)}
         
     if shipping:
         payload['ts'] = str(shipping)
