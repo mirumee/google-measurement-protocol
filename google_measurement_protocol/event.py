@@ -5,4 +5,4 @@ def event(category, action, label=None, value=None, **extra_data):
     if value:
         payload['ev'] = str(int(value))
     payload.update(extra_data)
-    return payload
+    yield payload
