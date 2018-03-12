@@ -1,22 +1,29 @@
+from typing import Dict, Generator, Iterable
+
 import requests
 
 TRACKING_URI = 'https://ssl.google-analytics.com/collect'
 
 
 def report(
-        tracking_id, client_id, payloads, extra_headers=None, **extra_data):
+        tracking_id: str, client_id: str, payloads: Iterable[Dict],
+        extra_headers: Dict[str, str]=None,
+        **extra_data) -> Iterable[requests.Response]:
     """Actually report measurements to Google Analytics."""
     return [
         _make_request(data, extra_headers) for data in _finalize_payloads(
             tracking_id, client_id, payloads, **extra_data)]
 
 
-def _make_request(data, extra_headers):
+def _make_request(
+        data: Dict, extra_headers: Dict[str, str]) -> requests.Response:
     return requests.post(
         TRACKING_URI, data=data, headers=extra_headers, timeout=5.0)
 
 
-def _finalize_payloads(tracking_id, client_id, payloads, **extra_data):
+def _finalize_payloads(
+        tracking_id: str, client_id: str, payloads: Iterable[Dict],
+        **extra_data) -> Generator[Dict, None, None]:
     """Get final data for API requests for Google Analytics.
 
     Updates payloads setting required non-specific values on data.

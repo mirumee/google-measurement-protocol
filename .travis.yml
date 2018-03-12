@@ -5,9 +5,10 @@ python:
   - 3.6
 install:
   - python setup.py install
-  - pip install httmock pytest pytest-cov
+  - pip install httmock mypy pytest pytest-cov
   - pip install codecov
 script:
   - pytest --cov
+  - mypy google_measurement_protocol --ignore-missing-imports
 after_success:
   - codecov

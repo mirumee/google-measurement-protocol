@@ -1,9 +1,13 @@
+from typing import Dict, Generator, Iterable
+from prices import Money
+
 from .event import event
 
 
 def enhanced_item(
-        name, unit_price, quantity=None, item_id=None, category=None,
-        brand=None, variant=None, **extra_data):
+        name: str, unit_price: Money, quantity: int=None, item_id: str=None,
+        category: str=None, brand: str=None, variant: str=None,
+        **extra_data) -> Dict:
     payload = {
         'nm': name, 'pr': str(unit_price.amount), 'qt': quantity or 1}
 
@@ -21,8 +25,10 @@ def enhanced_item(
 
 
 def enhanced_purchase(
-        transaction_id, items, revenue, url_page, tax=None, shipping=None,
-        host=None, affiliation=None, coupon=None, **extra_data):
+        transaction_id: str, items: Iterable[Dict], revenue: Money,
+        url_page: str, tax: Money=None, shipping: Money=None, host: str=None,
+        affiliation: str=None, coupon: str=None,
+        **extra_data) -> Generator[Dict, None, None]:
     if not items:
         raise ValueError('You need to specify at least one item')
 
@@ -31,7 +37,7 @@ def enhanced_purchase(
     payload = {
         'pa': 'purchase', 'ti': transaction_id, 'dp': url_page,
         'tr': str(revenue.amount), 'tt': '0'}
-        
+
     if shipping:
         payload['ts'] = str(shipping)
     if tax is not None:
@@ -39,7 +45,7 @@ def enhanced_purchase(
     if host:
         payload['dh'] = host
     if affiliation:
-        payload['ta'] = self.affiliation
+        payload['ta'] = affiliation
     if coupon:
         payload['tcc'] = coupon
 
@@ -51,7 +57,7 @@ def enhanced_purchase(
     yield payload
 
 
-def _finalize_enhanced_purchase_item(item, position):
+def _finalize_enhanced_purchase_item(item: Dict, position: int) -> Dict:
     position_prefix = 'pr{0}'.format(position)
     final_item = {}
     for key, value in item.items():

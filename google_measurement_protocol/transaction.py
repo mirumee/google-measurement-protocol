@@ -1,9 +1,11 @@
+from typing import Dict, Generator, Iterable
+
 from prices import Money
 
 
 def item(
-        name, unit_price, quantity=None, item_id=None, category=None,
-        **extra_data):
+        name: str, unit_price: Money, quantity: int=None, item_id: str=None,
+        category: str=None, **extra_data) -> Dict:
     payload = {
         't': 'item', 'in': name, 'ip': str(unit_price.amount),
         'cu': unit_price.currency}
@@ -20,8 +22,9 @@ def item(
 
 
 def transaction(
-        transaction_id, items, revenue, tax=None, shipping=None,
-        affiliation=None, **extra_data):
+        transaction_id: str, items: Iterable[Dict], revenue: Money,
+        tax: Money=None, shipping: Money=None, affiliation: str=None,
+        **extra_data) -> Generator[Dict, None, None]:
     if not items:
         raise ValueError('You need to specify at least one item')
 
@@ -35,10 +38,10 @@ def transaction(
         payload['ts'] = str(shipping.amount)
     if tax is not None:
         payload['tt'] = str(tax.amount)
-        
+
     payload.update(extra_data)
     yield payload
-    
+
     for item in items:
         final_item = dict(item)
         final_item['ti'] = transaction_id
