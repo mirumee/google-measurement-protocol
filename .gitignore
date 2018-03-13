@@ -1,11 +1,16 @@
 *.py[cod]
+*.pytest_cache/
+*.mypy_cache/
+
+# OS Files
+.DS_Store
+Thumbs.db
 
 # C extensions
 *.so
 
 # Packages
-*.egg
-*.egg-info
+*\.egg*
 dist
 build
 eggs
