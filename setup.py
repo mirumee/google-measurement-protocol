@@ -21,6 +21,6 @@ setup(
     license='BSD',
     version='1.0.0',
     packages=['google_measurement_protocol'],
-    install_requires=['requests>=2.0,<3.0a0', 'prices>=1.0.0', 'typing>=3.6.0'],
+    install_requires=['requests>=2.0,<3.0a0', 'prices>=1.0.0', 'typing>=3.6.0;python_version<"3.5"'],
     classifiers=CLASSIFIERS,
     platforms=['any'])
